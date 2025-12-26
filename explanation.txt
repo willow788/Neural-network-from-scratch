@@ -1,0 +1,149 @@
+This project implements a simple feed-forward neural network **from scratch using NumPy**. The network is trained to learn the XOR function, which outputs 1 only when the two inputs are different.
+
+The implementation includes **manual forward propagation, loss calculation, backpropagation, and gradient-descent updates**, without using any machine-learning libraries.
+
+### 1. Imports and Setup
+
+```python
+import numpy as np
+np.random.seed(42)
+```
+
+NumPy is used for matrix operations. The random seed ensures reproducible results.
+
+### 2. Activation Function
+
+```python
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+def sigmoid_deriv(x):
+    return x * (1 - x)
+```
+
+The sigmoid function maps values between 0 and 1.
+Its derivative is used during backpropagation.
+
+### 3. Training Data (XOR Problem)
+
+```python
+X = np.array([[0,0],[0,1],[1,0],[1,1]])
+y = np.array([[0],[1],[1],[0]])
+```
+
+X contains the inputs.
+y contains the corresponding expected outputs.
+
+### 4. Network Architecture
+
+```python
+input_neurons = 2
+hidden_neurons = 4
+output_neurons = 1
+lr = 0.1
+```
+
+The network has:
+• 2 input neurons
+• 1 hidden layer with 4 neurons
+• 1 output neuron
+• A learning rate of 0.1
+
+### 5. Weight and Bias Initialization
+
+```python
+W1 = np.random.randn(input_neurons, hidden_neurons) * 0.1
+b1 = np.zeros((1, hidden_neurons))
+
+W2 = np.random.randn(hidden_neurons, output_neurons) * 0.1
+b2 = np.zeros((1, output_neurons))
+```
+
+Weights are initialized with small random values.
+Biases are initialized to zero.
+
+### 6. Training Loop
+
+The model is trained over multiple epochs.
+
+```python
+for epoch in range(10000):
+```
+
+#### Forward Pass
+
+```python
+z1 = np.dot(X, W1) + b1
+a1 = sigmoid(z1)
+
+z2 = np.dot(a1, W2) + b2
+y_hat = sigmoid(z2)
+```
+
+Data flows through the network to produce predictions `y_hat`.
+
+#### Loss Function
+
+```python
+loss = np.mean((y - y_hat) ** 2)
+```
+
+Mean Squared Error (MSE) measures prediction error.
+
+### 7. Backpropagation
+
+Gradients are computed manually.
+
+```python
+d_loss_yhat = (y_hat - y)
+d_z2 = d_loss_yhat * sigmoid_deriv(y_hat)
+
+dW2 = np.dot(a1.T, d_z2)
+db2 = np.sum(d_z2, axis=0, keepdims=True)
+
+d_a1 = np.dot(d_z2, W2.T)
+d_z1 = d_a1 * sigmoid_deriv(a1)
+
+dW1 = np.dot(X.T, d_z1)
+db1 = np.sum(d_z1, axis=0, keepdims=True)
+```
+
+This applies the chain rule to determine how each weight affected the loss.
+
+### 8. Weight Updates
+
+```python
+W1 -= lr * dW1
+b1 -= lr * db1
+W2 -= lr * dW2
+b2 -= lr * db2
+```
+
+Weights are updated using gradient descent.
+
+### 9. Output
+
+After training, the network predicts XOR values close to:
+
+```text
+0
+1
+1
+0
+```
+
+---
+
+## Summary
+
+This project demonstrates:
+
+• Neural network forward propagation
+• Sigmoid activation
+• Loss calculation
+• Manual backpropagation
+• Gradient descent optimization
+
+It serves as a minimal, educational implementation showing the core mechanics behind modern deep-learning frameworks.
+
+
